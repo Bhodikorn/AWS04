@@ -1,0 +1,18 @@
+#### Log number
+# CRITICAL = 50
+# ERROR = 40
+# WARNING = 30
+# INFO = 20
+# DEBUG = 10
+# NOTSET = 0
+
+check:
+  # date format is dd-mm-yyyy
+  start_date: 01-01-2023
+  stop_date: 01-02-2023
+  imerg_source: /root/projects/data/IMERG
+  gsmap_source: /root/projects/data/GSMAP_hourly
+  gsmap_g_source: /root/projects/data/GSMAP_hourly_G
+  check_file_exist: True
+  check_file_corrupt: True
+  log_level: 10

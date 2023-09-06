@@ -1,0 +1,44 @@
+#### Log number
+# CRITICAL = 50
+# ERROR = 40
+# WARNING = 30
+# INFO = 20
+# DEBUG = 10
+# NOTSET = 0
+
+merge_label:
+  source_path: /root/projects/data_preprocessed/label_multiband
+  destination_path: /root/projects/data_final
+  select_columns:
+    - station_id
+    - station_name
+    - agency_name
+    - province
+    - region
+    - date
+    - month
+    - season
+    - lat
+    - lat_sat
+    - lon
+    - lon_sat
+    - DEM
+    - DEM_cat
+    - DEM_cat_th
+    - LUN
+    - LUN_def
+    - IMERG_precipitationCal
+    - IMERG_precipitationUncal
+    - IMERG_precipitationCal_cat
+    - IMERG_precipitationUncal_cat
+    - GSMAP_hourly
+    - GSMAP_hourly_g
+    - GSMAP_hourly_cat
+    - GSMAP_hourly_g_cat
+    - rain(mm)
+    - rain_cat
+    - rain_cat_th
+  output_name: rain_cat
+  auto_increment: True
+  drop_na: False
+  log_level: 10

@@ -1,0 +1,35 @@
+#### Log number
+# CRITICAL = 50
+# ERROR = 40
+# WARNING = 30
+# INFO = 20
+# DEBUG = 10
+# NOTSET = 0
+
+inference:
+  start_date: 01-01-2022
+  stop_date: 01-02-2022
+  model_source: /root/projects/models
+  predict_columns:
+    - name: LinearRegression_band
+      model: LinearRegression
+    - name: RandomForestRegressor_band
+      model: RandomForestRegressor
+    - name: LogisticRegression_band
+      model: LogisticRegression
+    - name: RandomForestClassifier_band
+      model: RandomForestClassifier
+  dem_path: /root/projects/data/DEM/Thailand_DEM_match.tif
+  landuse_path: /root/projects/data/landuse/lu_all_match_mode.tif
+  imerg_source: /root/projects/data_preprocessed/IMERG_multiband/*/1KM
+  imerg_column: precipitationCal # precipitationCal, precipitationUncal  
+  gsmap_source: /root/projects/data_preprocessed/GSMAP_multiband/*/1KM
+  gsmap_column: hourly_g # hourly, hourly_g
+  season:
+    rain: [5,6,7,8,9,10]
+    winter: [11,12,1]
+    sunny: [2,3,4]
+  destination_path: /root/projects/data_predict
+  output_name_prefix: predict
+  threads: -1 # -1: use all server threads
+  log_level: 10

@@ -1,0 +1,51 @@
+#### Log number
+# CRITICAL = 50
+# ERROR = 40
+# WARNING = 30
+# INFO = 20
+# DEBUG = 10
+# NOTSET = 0
+
+train_model:
+  csv_path: /root/projects/data_final/rain_cat.csv
+  receipts_source: /root/projects/data_receipts
+  model_source: /root/projects/models
+  models:
+    - names: 
+        - LinearRegression
+        - RandomForestRegressor
+      X: 
+        - name: season
+          is_category: True
+        - name: lat_sat
+          is_category: False
+        - name: lon_sat
+          is_category: False
+        - name: DEM
+          is_category: False
+        - name: LUN
+          is_category: True
+        - name: IMERG_precipitationCal
+          is_category: False
+        - name: GSMAP_hourly_g
+          is_category: False
+      y: rain(mm)
+    - names: 
+        - LogisticRegression
+        - RandomForestClassifier
+      X: 
+        - name: season
+          is_category: True
+        - name: region
+          is_category: True
+        - name: DEM_cat
+          is_category: True
+        - name: LUN
+          is_category: True
+        - name: IMERG_precipitationCal_cat
+          is_category: True
+        - name: GSMAP_hourly_g_cat
+          is_category: True
+      y: rain_cat
+  threads: -1 # -1: use all server threads
+  log_level: 10

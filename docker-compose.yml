@@ -1,0 +1,17 @@
+version: "3.9"
+
+services:
+  dev:
+    build: 
+      context: .
+      dockerfile: .Dockerfile
+    volumes:
+      - ./projects:/root/projects
+      - ./.vscode-server/python:/root/.vscode-server
+  rain:
+    image: akraradets/rainproject:1.0.0
+    build: 
+      context: .
+      dockerfile: deploy.Dockerfile
+    volumes:
+      - ./projects:/root/projects

@@ -1,0 +1,42 @@
+#### Log number
+# CRITICAL = 50
+# ERROR = 40
+# WARNING = 30
+# INFO = 20
+# DEBUG = 10
+# NOTSET = 0
+
+prepare_label:
+  mode: 1 # 0: singleband, 1: multiband
+  source_path: /root/projects/data/label
+  destination_path: /root/projects/data_preprocessed/label_multiband
+  imerg_source: /root/projects/data_preprocessed/IMERG_multiband/*/1KM
+  gsmap_source: /root/projects/data_preprocessed/GSMAP_multiband/*/1KM
+  dem_source: /root/projects/data/DEM/Thailand_DEM_match.tif
+  landuse_source: /root/projects/data/landuse/lu_all_match_mode.tif
+  region_source: /root/projects/data/region/tmd_region.csv
+  resolution:
+    satellite: 0.01
+  season:
+    rain: [5,6,7,8,9,10]
+    winter: [11,12,1]
+    sunny: [2,3,4]
+  column_names:
+    imerg: IMERG
+    gsmap: GSMAP
+    satellite_category: satellite_cat # `satellite` will be replaced by satllite column name. ex, IMERG_precipitationCal_cat
+    dem: DEM
+    dem_cateogy: DEM_cat
+    dem_cateogy_th: DEM_cat_th
+    landuse: LUN
+    landuse_def: LUN_def
+    rain_category: rain_cat
+    rain_category_th: rain_cat_th
+    region: region
+    month: month
+    season: season
+    lat: lat_sat
+    lon: lon_sat
+  ignore_rain_nan: False # will exclude any row with rain(mm) = nan
+  threads: -1 # -1: use all server threads
+  log_level: 10

@@ -1,0 +1,27 @@
+#### Log number
+# CRITICAL = 50
+# ERROR = 40
+# WARNING = 30
+# INFO = 20
+# DEBUG = 10
+# NOTSET = 0
+
+gsmap:
+  # date format is dd-mm-yyyy
+  start_date: 01-01-2023
+  stop_date: 02-01-2023
+  gsmap_host: hokusai.eorc.jaxa.jp
+  hourly:
+    gsmap_file_path: /standard/v7/hourly/
+    file_prefix: gsmap_mvk
+    destination: /root/projects/data/GSMAP_hourly
+  hourly_g:
+    gsmap_file_path: /standard/v7/hourly_G/
+    file_prefix: gsmap_gauge
+    destination: /root/projects/data/GSMAP_hourly_G
+  retry_max: 3
+  retry_wait: 10 # second(s)
+  timeout: 100 # second(s)
+  ignore_cache: False # When True the script will always check file list from servers and rewrite the cache in /temp
+  log_level: 10
+  log_ftp_level: 10

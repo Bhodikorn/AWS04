@@ -1,0 +1,242 @@
+#### Log number
+# CRITICAL = 50
+# ERROR = 40
+# WARNING = 30
+# INFO = 20
+# DEBUG = 10
+# NOTSET = 0
+
+imerg:
+  # date format is dd-mm-yyyy
+  start_date: 01-01-2022
+  stop_date: 02-01-2023
+  # imerg_url: https://gpm1.gesdisc.eosdis.nasa.gov/data/GPM_L3/GPM_3IMERGHHE.06 # Early link
+  imerg_url: https://gpm1.gesdisc.eosdis.nasa.gov/data/GPM_L3/GPM_3IMERGHHL.06 # Late link
+  destination: /root/projects/data/IMERG
+  retry_max: 3
+  retry_wait: 10 # second(s)
+  timeout: 100 # second(s)
+  ignore_cache: False # When True the script will always check file list from servers and rewrite the cache in /temp
+  log_level: 10
+  log_wget_level: 10
+
+gsmap:
+  # date format is dd-mm-yyyy
+  start_date: 01-01-2022
+  stop_date: 02-01-2023
+  gsmap_host: hokusai.eorc.jaxa.jp
+  hourly:
+    gsmap_file_path: /standard/v7/hourly/
+    file_prefix: gsmap_mvk
+    destination: /root/projects/data/GSMAP_hourly
+  hourly_g:
+    gsmap_file_path: /standard/v7/hourly_G/
+    file_prefix: gsmap_gauge
+    destination: /root/projects/data/GSMAP_hourly_G
+  retry_max: 3
+  retry_wait: 10 # second(s)
+  timeout: 100 # second(s)
+  ignore_cache: False # When True the script will always check file list from servers and rewrite the cache in /temp
+  log_level: 10
+  log_ftp_level: 10
+
+gsmap_txt:
+  # date format is dd-mm-yyyy
+  start_date: 01-01-2022
+  stop_date: 02-01-2023
+  gsmap_host: ftp.gportal.jaxa.jp
+  gsmap_file_path: /standard/GSMaP/3.GSMAP.H/05A/
+  destination: /root/projects/data/GSMAP_TXT
+  log_level: 10
+  log_ftp_level: 10
+
+preprocess:
+  # date format is dd-mm-yyyy
+  start_date: 01-01-2022
+  stop_date: 02-01-2023
+  bounding_box: ## The bounding for limiting the aggregation
+    lat_range: [5.4,20.6]
+    lon_range: [97.1,106.0]
+  timezone: '+7' ## Timezone for querying the raw files
+  imerg:
+    columns:
+      longitude: lon
+      latitude: lat
+      value: precipitationCal
+    source_path: /root/projects/data/imerg
+    aggregated_path: /root/projects/data_preprocessed/imerg
+    geotiff_path: /root/projects/data_preprocessed/imerg
+  imerg_multiband:
+    columns:
+      longitude: lon
+      latitude: lat
+      values: 
+        - precipitationCal
+        - precipitationUncal
+    source_path: /root/projects/data/IMERG
+    aggregated_path: /root/projects/data_preprocessed/IMERG_multiband
+    geotiff_path: /root/projects/data_preprocessed/IMERG_multiband
+  gsmap_dat:
+    source_path: /root/projects/data/GSMAP_hourly_G
+    aggregated_path: /root/projects/data_preprocessed/GSMAP_hourly_G
+    geotiff_path: /root/projects/data_preprocessed/GSMAP_hourly_G
+  gsmap_dat_multiband:
+    source_path: 
+      hourly: /root/projects/data/GSMAP_hourly
+      hourly_g: /root/projects/data/GSMAP_hourly_G
+    aggregated_path: /root/projects/data_preprocessed/GSMAP_multiband
+    geotiff_path: /root/projects/data_preprocessed/GSMAP_multiband
+  gsmap_txt:
+    columns:
+      longitude: Lon
+      latitude: Lat
+      value: HourlyPrecipRateGC
+    source_path: /root/projects/data/GSMAP_TXT
+    aggregated_path: /root/projects/data_preprocessed/GSMAP_TXT
+    geotiff_path: /root/projects/data_preprocessed/GSMAP_TXT
+  threads: -1 # -1: use all server threads
+  log_level: 20
+
+prepare_label:
+  mode: 1 # 0: singleband, 1: multiband
+  source_path: /root/projects/data/label
+  destination_path: /root/projects/data_preprocessed/label_multiband
+  imerg_source: /root/projects/data_preprocessed/IMERG_multiband/*/1KM
+  gsmap_source: /root/projects/data_preprocessed/GSMAP_multiband/*/1KM
+  dem_source: /root/projects/data/DEM/Thailand_DEM_match.tif
+  landuse_source: /root/projects/data/landuse/lu_all_match_mode.tif
+  region_source: /root/projects/data/region/tmd_region.csv
+  resolution:
+    satellite: 0.01
+  season:
+    rain: [5,6,7,8,9,10]
+    winter: [11,12,1]
+    sunny: [2,3,4]
+  column_names:
+    imerg: IMERG
+    gsmap: GSMAP
+    satellite_category: satellite_cat # `satellite` will be replaced by satllite column name. ex, IMERG_precipitationCal_cat
+    dem: DEM
+    dem_cateogy: DEM_cat
+    dem_cateogy_th: DEM_cat_th
+    landuse: LUN
+    landuse_def: LUN_def
+    rain_category: rain_cat
+    rain_category_th: rain_cat_th
+    region: region
+    month: month
+    season: season
+    lat: lat_sat
+    lon: lon_sat
+  ignore_rain_nan: False # will exclude any row with rain(mm) = nan
+  threads: -1 # -1: use all server threads
+  log_level: 10
+
+merge_label:
+  source_path: /root/projects/data_preprocessed/label_multiband
+  destination_path: /root/projects/data_final
+  select_columns:
+    - station_id
+    - station_name
+    - agency_name
+    - province
+    - region
+    - date
+    - month
+    - season
+    - lat
+    - lat_sat
+    - lon
+    - lon_sat
+    - DEM
+    - DEM_cat
+    - DEM_cat_th
+    - LUN
+    - LUN_def
+    - IMERG_precipitationCal
+    - IMERG_precipitationUncal
+    - IMERG_precipitationCal_cat
+    - IMERG_precipitationUncal_cat
+    - GSMAP_hourly
+    - GSMAP_hourly_g
+    - GSMAP_hourly_cat
+    - GSMAP_hourly_g_cat
+    - rain(mm)
+    - rain_cat
+    - rain_cat_th
+  output_name: rain_cat
+  auto_increment: True
+  drop_na: False
+  log_level: 10
+
+train_model:
+  csv_path: /root/projects/data_final/rain_cat.csv
+  receipts_source: /root/projects/data_receipts
+  model_source: /root/projects/models
+  models:
+    - names: 
+        - LinearRegression
+        - RandomForestRegressor
+      X: 
+        - name: season
+          is_category: True
+        - name: lat_sat
+          is_category: False
+        - name: lon_sat
+          is_category: False
+        - name: DEM
+          is_category: False
+        - name: LUN
+          is_category: True
+        - name: IMERG_precipitationCal
+          is_category: False
+        - name: GSMAP_hourly_g
+          is_category: False
+      y: rain(mm)
+    - names: 
+        - LogisticRegression
+        - RandomForestClassifier
+      X: 
+        - name: season
+          is_category: True
+        - name: region
+          is_category: True
+        - name: DEM_cat
+          is_category: True
+        - name: LUN
+          is_category: True
+        - name: IMERG_precipitationCal_cat
+          is_category: True
+        - name: GSMAP_hourly_g_cat
+          is_category: True
+      y: rain_cat
+  threads: -1 # -1: use all server threads
+  log_level: 10
+
+inference:
+  start_date: 01-01-2022
+  stop_date: 01-02-2022
+  model_source: /root/projects/models
+  predict_columns:
+    - name: LinearRegression_band
+      model: LinearRegression
+    - name: RandomForestRegressor_band
+      model: RandomForestRegressor
+    - name: LogisticRegression_band
+      model: LogisticRegression
+    - name: RandomForestClassifier_band
+      model: RandomForestClassifier
+  dem_path: /root/projects/data/DEM/Thailand_DEM_match.tif
+  landuse_path: /root/projects/data/landuse/lu_all_match_mode.tif
+  imerg_source: /root/projects/data_preprocessed/IMERG_multiband/*/1KM
+  imerg_column: precipitationCal # precipitationCal, precipitationUncal  
+  gsmap_source: /root/projects/data_preprocessed/GSMAP_multiband/*/1KM
+  gsmap_column: hourly_g # hourly, hourly_g
+  season:
+    rain: [5,6,7,8,9,10]
+    winter: [11,12,1]
+    sunny: [2,3,4]
+  destination_path: /root/projects/data_predict
+  output_name_prefix: predict
+  threads: -1 # -1: use all server threads
+  log_level: 10
