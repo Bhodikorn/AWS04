@@ -33,7 +33,7 @@ ctrl + D to exit
 
 Select Task: "
 
-# Check if there is $1 (argument)
+# Check if there is $1 (argument) 555
 if [ -z "$1" ]
 then
     read -p "$message" task
